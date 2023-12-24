@@ -16,7 +16,7 @@ public class Character2DMovement : MonoBehaviour
 	[Tooltip("Sprint speed of the character in m/s")]
 	public float SprintSpeed = 6.0f;
 	[Tooltip("Rotation speed of the character")]
-	public float RotationSpeed = 3.0f;				//altered in editor from 1.0f
+	public float RotationSpeed = 8.0f;				//altered in editor from 1.0f
 	[Tooltip("Acceleration and deceleration")]
 	public float SpeedChangeRate = 10.0f;
 	[Tooltip("Animation divider for the movement speed")]
@@ -76,6 +76,7 @@ public class Character2DMovement : MonoBehaviour
 
         mHeadingRight = true;
     }
+    
 
     /// <summary>
     /// Update called once per frame.
@@ -195,7 +196,11 @@ public class Character2DMovement : MonoBehaviour
 		if (mVerticalSpeed > mTerminalVelocity)
 		{ mVerticalSpeed -= Gravity * Time.fixedDeltaTime; }
 	}
-
+	
+    //added for time calcualtion
+    float inc = 33;
+    private float elapsedTime = 0.0f;
+    
     /// <summary>
     /// Run animation according to the current state.
     /// </summary>
@@ -277,10 +282,20 @@ public class Character2DMovement : MonoBehaviour
 			{
 				animator.SetBool("Jump", false);
 			}
-		
 			animator.SetBool("Grounded", grounded);
 			animator.SetBool("Fall", falling);
 			animator.SetBool("Crouch", crouch);
+			
+			if (!jump && moveSpeed == 0 && !falling && !crouch)
+			{
+				elapsedTime += Time.deltaTime;
+					animator.SetFloat("WaitTime", elapsedTime);
+			}
+			else
+			{
+				elapsedTime = 0.0f;
+			}
+			
 
 			/*
 			 * Task #1b: Passing properties to the Animator
